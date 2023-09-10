@@ -1,0 +1,26 @@
+{
+    "size": [800,600],
+    
+    "ball": {
+        "position": [100,100]
+    },
+
+    "hole": {
+        "position": [400,400]
+    },
+
+    "barrier": [[0,0], [500,30], [500,500], [30,500]],
+
+    "kinetics": [
+        {"type": "Quad",
+        "position": [300, 300],
+        "parameters": [120,10],
+        "color": [0.3, 0.7, 0.8],
+        "program": "lambda t : [300, 300, 0.5]"} 
+    ],
+
+    "statics": [],
+
+    "stars": []
+
+}
