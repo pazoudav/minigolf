@@ -70,7 +70,7 @@ class Texture(Solid):
         
         
     def load(self, filename):
-        im = Image.open(f'../textures/{filename}').convert('RGBA')
+        im = Image.open(f'textures/{filename}').convert('RGBA')
         im = im.rotate(180)
         im = ImageOps.mirror(im)
         data = np.asarray(im, dtype=np.uint8)

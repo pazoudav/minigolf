@@ -2,14 +2,16 @@ import pygame as pg
 import time
 import numpy as np
 
+SOUND_DIR = 'sounds/'
+
 pg.mixer.init()
-SOUND_HIT = pg.mixer.Sound('../sounds/hit01.wav')
+SOUND_HIT = pg.mixer.Sound(SOUND_DIR + 'hit01.wav')
 SOUND_HIT.set_volume(0.2)
-SOUND_WIN = pg.mixer.Sound('../sounds/yeah2.wav')
+SOUND_WIN = pg.mixer.Sound(SOUND_DIR + 'yeah2.wav')
 SOUND_WIN.set_volume(2)
-SOUND_BACKGROUND = pg.mixer.Sound('../sounds/background1.wav')
+SOUND_BACKGROUND = pg.mixer.Sound(SOUND_DIR + 'background1.wav')
 SOUND_BACKGROUND.set_volume(0.4)
-SOUND_STRECH = pg.mixer.Sound('../sounds/strech.wav')
+SOUND_STRECH = pg.mixer.Sound(SOUND_DIR + 'strech.wav')
 SOUND_STRECH.set_volume(0.4)
 
 def play_sound(sound):

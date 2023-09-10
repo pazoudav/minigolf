@@ -21,7 +21,7 @@ class Level():
         self.all_bodies = []
         
     def set_name(self, name):
-        self.filename = '../levels/' + name + '.json'
+        self.filename = 'levels/' + name + '.json'
         self.name = name
     
     def load(self):
