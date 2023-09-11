@@ -14,8 +14,9 @@ def nothing():
 class Controller():
     def __init__(self, env) -> None:
         self.keys = {}
-        self.reset_keys()
         self.env = env
+        self.reset_keys()
+        self.set_keys()
     
     def event_loop(self):
         for event in pg.event.get():               
@@ -24,6 +25,9 @@ class Controller():
             elif event.type == pg.KEYDOWN:
                 if event.key in self.keys[pg.KEYDOWN]:
                     self.keys[pg.KEYDOWN][event.key]()
+            elif event.type == pg.KEYUP:
+                if event.key in self.keys[pg.KEYUP]:
+                    self.keys[pg.KEYUP][event.key]()
             elif event.type == pg.MOUSEBUTTONUP:
                 if event.button in self.keys[pg.MOUSEBUTTONUP]:
                     self.keys[pg.MOUSEBUTTONUP][event.button]()
@@ -43,6 +47,10 @@ class Controller():
         self.keys[pg.KEYDOWN][K_MINUS] = nothing
         self.keys[pg.KEYDOWN][K_EQUALS] = nothing # plus
         self.keys[pg.KEYUP] = {}
+        self.keys[pg.KEYUP][K_LEFT] =       nothing 
+        self.keys[pg.KEYUP][K_RIGHT] =      nothing 
+        self.keys[pg.KEYUP][K_UP] =         nothing 
+        self.keys[pg.KEYUP][K_DOWN] =       nothing 
         self.keys[pg.MOUSEBUTTONUP] = {}
         self.keys[pg.MOUSEBUTTONUP][1] = nothing
         self.keys[pg.MOUSEBUTTONDOWN] = {}

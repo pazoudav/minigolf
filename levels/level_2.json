@@ -15,8 +15,10 @@
         {"type": "Ball",
         "position": [100, 400],
         "parameters": [40, 16],
-        "program": "lambda t :  [0, -100, 0] if ((t // 2.5) % 2 == 0) else [0, 100, 0]"} 
+        "program": "lambda t :  [50*cos(4*t), -120*(sin(t)), 0]"} 
     ],
+
+    
 
     "statics": [],
 

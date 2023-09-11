@@ -25,8 +25,8 @@ class GameController(Controller):
         ut.FACTOR_SCALE /= 0.9
         
     def set_keys(self):
-        self.keys[pg.KEYDOWN][K_ESCAPE] =   self.env['choose_level_menu'].launch
-        self.keys[pg.KEYDOWN][K_r] =        self.level.reset
+        self.keys[pg.KEYDOWN][K_ESCAPE] =   lambda: self.env['choose_level_menu'].launch()
+        self.keys[pg.KEYDOWN][K_r] =        lambda: self.level.reset()
         self.keys[pg.KEYDOWN][K_LEFT] =     self.key_down_left
         self.keys[pg.KEYDOWN][K_RIGHT] =    self.key_down_right
         self.keys[pg.KEYDOWN][K_UP] =       self.key_down_up
@@ -39,7 +39,7 @@ class GameController(Controller):
     def mouse_up_1(self):
         if not self.level.is_ball_moving() and ut.MOUSEBUTTONDOWN_PRESSED:
             ball = self.level.ball
-            ball.speed = ball.position - ut.mouse_position()
+            ball.speed = ball.position - ut.mouse_world_position()
             ball.speed = 200*np.min([ut.time.time() - ut.MOUSEBUTTONDOWN_TIME, 2])* ball.speed /np.linalg.norm(ball.speed)
             ut.MOUSEBUTTONDOWN_PRESSED = False
             self.level.played += 1
@@ -53,23 +53,29 @@ class GameController(Controller):
             
     def pre_loop(self):
         self.update()
-        set_mode()
         draw_level(self.level)
         if not self.level.is_ball_moving():
-            draw_aim_bar(self.level.ball.position, ut.mouse_position())
+            draw_aim_bar(self.level.ball.position, ut.mouse_world_position())
+        else:
+            if ut.MOUSEBUTTONDOWN_PRESSED:
+                ut.MOUSEBUTTONDOWN_PRESSED = False
+                ut.stop_sound(ut.SOUND_STRECH) 
         if ut.MOUSEBUTTONDOWN_PRESSED:
-            draw_power_bar(ut.MOUSEBUTTONDOWN_TIME, self.level.ball.position, ut.mouse_position())
+            draw_power_bar(ut.MOUSEBUTTONDOWN_TIME, self.level.ball.position, ut.mouse_world_position())
         if self.level.is_won():
-            
+            self.level.ball.friction = 1
             for i in range(1000):
                 d = self.level.hole.position - self.level.ball.position
-                d = d/np.linalg.norm(d)
-                n = 100*np.array([-d[1], d[0]])
-                self.level.ball.speed = n
+                n_diff = d/np.linalg.norm(d)
+                self.level.ball.speed = 0.995*(self.level.ball.speed +  n_diff)
                 self.update()
-                set_mode()
                 draw_level(self.level)
                 pg.display.flip()
+                if not self.level.is_won():
+                    return
+            self.level.ball.visible = False
+            draw_level(self.level)
+            pg.display.flip()
             ut.play_sound(ut.SOUND_WIN)
             self.env['end_level_menu'].launch_wrapper(self.level.stars_collected())
             
@@ -81,7 +87,7 @@ class GameController(Controller):
         self.level = Level(self.env['level_name'])
         self.level.load()
         self.env['level'] = self.level
-        self.set_keys()
+        # self.set_keys()
       
     def launch_wrapper(self, level_name):
         self.env['level_name'] = level_name
@@ -138,9 +144,9 @@ class GameController(Controller):
 #         set_mode()
 #         draw_level(level)
 #         if not level.is_ball_moving():
-#             draw_aim_bar(level.ball.position, ut.mouse_position())
+#             draw_aim_bar(level.ball.position, ut.mouse_world_position())
 #         if ut.MOUSEBUTTONDOWN_PRESSED:
-#             draw_power_bar(ut.MOUSEBUTTONDOWN_TIME, level.ball.position, ut.mouse_position())
+#             draw_power_bar(ut.MOUSEBUTTONDOWN_TIME, level.ball.position, ut.mouse_world_position())
 #         if level.is_won():
             
 #             for i in range(1000):
@@ -180,7 +186,7 @@ class GameController(Controller):
 #         level = env['level']
 #         if not level.is_ball_moving() and ut.MOUSEBUTTONDOWN_PRESSED:
 #             ball = level.ball
-#             ball.speed = ball.position - ut.mouse_position()
+#             ball.speed = ball.position - ut.mouse_world_position()
 #             ball.speed = 200*np.min([ut.time.time() - ut.MOUSEBUTTONDOWN_TIME, 2])* ball.speed /np.linalg.norm(ball.speed)
 #             ut.MOUSEBUTTONDOWN_PRESSED = False
 #             level.played += 1
