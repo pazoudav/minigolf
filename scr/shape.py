@@ -120,6 +120,10 @@ class Ball(Shape):
     def get_outside(self):
         return np.array(self.points[1:])
     
+    def set_position(self, new_pos):
+        super().set_position(new_pos)
+        self.center = new_pos
+    
     def __dict__(self):
         d = super().__dict__()
         d['type'] = 'Ball'

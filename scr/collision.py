@@ -16,12 +16,12 @@ def ball_line_collision_2(ball, l, time):
     line = l.shape.get_outside()
     org_line = deepcopy(line)
     for point in org_line:
-        impact_vector = point - ball.shape.pos 
+        impact_vector = point - ball.position 
         if np.linalg.norm(impact_vector) <= ball.shape.radius:
             ball.update_position(-time)
             return True, [], [point]
         
-    p = ball.shape.pos.copy()
+    p = ball.position.copy()
     delta = line[0].copy()
     line -= delta
     p -= delta
@@ -111,9 +111,9 @@ def new_collision(a, b, delta_):
     b.update_position(best_time)
     # print(check_collision(a,b,0))
 
-    a_vector = contact_point - a.shape.pos
+    a_vector = contact_point - a.position
     a_vector /= np.linalg.norm(a_vector) 
-    b_vector = contact_point - b.shape.pos
+    b_vector = contact_point - b.position
     b_vector /= np.linalg.norm(b_vector) 
     if isinstance(a, DynamicBody) and isinstance(b, DynamicBody):
         a.speed += b_vector*np.dot(b_vector, b.speed) - a_vector*np.dot(a_vector, a.speed)
@@ -151,7 +151,7 @@ def new_collision(a, b, delta_):
 # def ball_polygon_collision(ball, rect):
 #     if not isinstance(ball, DynamicBody) and isinstance(rect, DynamicBody):
 #         return False
-#     diff = ball.shape.pos - rect.shape.pos
+#     diff = ball.position - rect.position
 #     diff_size = np.linalg.norm(diff)
 #     # if diff_size > ball.shape.radius + np.linalg.norm([rect.shape.side_a/2, rect.shape.side_b/2]):
 #         # return False
@@ -170,7 +170,7 @@ def new_collision(a, b, delta_):
 
 # def ball_line_collision(ball, line):
 #     org_line = deepcopy(line)
-#     p = ball.shape.pos.copy()
+#     p = ball.position.copy()
 #     delta = line[0].copy()
 #     line -= delta
 #     p -= delta
@@ -182,7 +182,7 @@ def new_collision(a, b, delta_):
 #         ball.speed -= 2*np.dot(ball.speed, d/distance)*d/distance
 #         return True
 #     for point in org_line:
-#         impact_vector = ball.shape.pos - point
+#         impact_vector = ball.position - point
 #         if np.linalg.norm(impact_vector) <= ball.shape.radius and np.dot(impact_vector, ball.speed) >= 0:
 #             norm = (impact_vector)/np.linalg.norm(impact_vector)
 #             ball.speed = np.array(ball.speed) - 2*np.dot(norm, ball.speed)*norm
@@ -191,7 +191,7 @@ def new_collision(a, b, delta_):
         
 
 # def ball_ball_collision(a, b):
-#     diff = a.shape.pos - b.shape.pos
+#     diff = a.position - b.position
 #     diff_size = np.linalg.norm(diff)
 #     if diff_size <= a.shape.radius + b.shape.radius:
 #         diff /= diff_size 
@@ -212,7 +212,7 @@ def new_collision(a, b, delta_):
 #     if isinstance(poly.shape, Ball):
 #         for p in line.shape.get_outside():
 #             # print(p, np.linalg.norm(p - poly.shape.center))
-#             if np.linalg.norm(p - poly.shape.pos) <= poly.shape.radius:
+#             if np.linalg.norm(p - poly.position) <= poly.shape.radius:
 #                 print('point collision')
 #                 return True, [], p
        

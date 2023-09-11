@@ -22,7 +22,7 @@ def update(level, clock):
         if collision_happened:
             level.ball.updated = True
             play_sound(SOUND_HIT)
-            # actions.append(Collision(level.ball.shape.pos))
+            # actions.append(Collision(level.ball.position))
             break
         
     for body in level.kinetics:
@@ -31,14 +31,14 @@ def update(level, clock):
             level.ball.updated = True
             body.updated = True
             play_sound(SOUND_HIT)
-            # actions.append(Collision(level.ball.shape.pos))
-            break
+            # actions.append(Collision(level.ball.position))
+            # break
         else:
             body.update_position(time)
       
     if not level.ball.updated:
         level.ball.update_position(time)
-    level.ball.apply_friction(time)
+        level.ball.apply_friction(time)
             
     for star in level.stars:
         if check_collision(level.ball, star, 0)[0]:

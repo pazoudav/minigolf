@@ -19,6 +19,7 @@ class BasicBody():
         self.visible = True
         self.collision = SOLID
         self.material = material
+        self.position = self.shape.pos
         if isinstance(self.material, Texture):
             self.material.map(self.shape.points)
         self.updated = False
@@ -43,9 +44,6 @@ class StaticBody(BasicBody):
         self.shape = shape
         self.speed = 0
         self.rotation = 0
-    
-    def update_position(self):
-        ...
         
     def set_speed(self, new_speed):
         ...
@@ -72,6 +70,7 @@ class KineticBody(BasicBody):
         self.rotation = r
         self.shape.set_position(self.shape.pos + self.speed*delta_t)
         self.shape.rotate(r*delta_t)
+        self.position = self.shape.pos
         
     def set_speed(self, new_speed):
         ...
@@ -100,6 +99,7 @@ class DynamicBody(BasicBody):
             self.shape.set_position(self.shape.pos + self.speed*delta_t)
         if self.rotation != 0:
             self.shape.rotate(self.rotation*delta_t)
+        self.position = self.shape.pos
         
     def set_speed(self, new_speed):
         self.speed = np.array(new_speed)

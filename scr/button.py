@@ -13,7 +13,7 @@ class BasicButton(StaticBody):
     def is_selected(self, mouse_pos):
         if not self.active:
             return False
-        ld_corner = self.shape.pos - [self.shape.side_a/2, self.shape.side_b/2]
+        ld_corner = self.position - [self.shape.side_a/2, self.shape.side_b/2]
         ru_corner = ld_corner + [self.shape.side_a, self.shape.side_b]
         return (mouse_pos > ld_corner).all() and (mouse_pos < ru_corner).all()
 

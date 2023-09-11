@@ -89,12 +89,12 @@ class Level():
         with open(self.filename, 'w') as f:
             data = {}
             data['size'] = [int(x) for x in self.size]
-            data['ball'] = {"position": list(self.ball.shape.pos)}
-            data['hole'] = {"position": list(self.hole.shape.pos)}
-            data['barrier'] = [list(p.shape.pos) for p in self.barrier] 
+            data['ball'] = {"position": list(self.ball.position)}
+            data['hole'] = {"position": list(self.hole.position)}
+            data['barrier'] = [list(p.position) for p in self.barrier] 
             data['statics'] = [st.__dict__() for st in self.statics if st not in self.barrier]
             data['kinetics'] = [ki.__dict__() for ki in self.kinetics]
-            data['stars'] = [list(star.shape.pos) for star in self.stars]
+            data['stars'] = [list(star.position) for star in self.stars]
             print(data)
             json.dump(data, f, indent=4)
             # try: 
@@ -157,7 +157,7 @@ class Level():
         
         
     def is_won(self):
-        return np.linalg.norm(self.ball.shape.pos-self.hole.shape.pos) < SIZE_HOLE
+        return np.linalg.norm(self.ball.position-self.hole.position) < SIZE_HOLE
             
             
     def reset(self):

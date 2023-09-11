@@ -52,8 +52,8 @@ class LevelEditor():
         self.main_menu.add_button('static',     Button([OFFSET_BUTTON,360], SIZE_BUTTON, SIZE_BUTTON, self.add_static_launcher, Texture(TEXTURE_STATIC))) 
         self.main_menu.add_button('star',       Button([OFFSET_BUTTON,300], SIZE_BUTTON, SIZE_BUTTON, self.add_star, Texture(TEXTURE_STAR))) # star
         self.main_menu.add_button('save',       Button([OFFSET_BUTTON,240], SIZE_BUTTON, SIZE_BUTTON, self.save, Texture(TEXTURE_SAVE))) 
-        self.main_menu.add_button('delete',     Button([OFFSET_BUTTON,180], SIZE_BUTTON, SIZE_BUTTON, self.basic_loop, Texture(TEXTURE_TRASHCAN))) # delete
-        self.main_menu.add_button('home',       Button([OFFSET_BUTTON,120], SIZE_BUTTON, SIZE_BUTTON, None, Texture(TEXTURE_HOME))) # back to menu
+        # self.main_menu.add_button('delete',     Button([OFFSET_BUTTON,180], SIZE_BUTTON, SIZE_BUTTON, self.basic_loop, Texture(TEXTURE_TRASHCAN))) # delete
+        self.main_menu.add_button('home',       Button([OFFSET_BUTTON,180], SIZE_BUTTON, SIZE_BUTTON, None, Texture(TEXTURE_HOME))) # back to menu
         
         self.shape_menu = Menu()
         self.shape_menu.add_button('line',      Button([OFFSET_BUTTON,570], SIZE_BUTTON, SIZE_BUTTON, self.add_Line, Texture(TEXTURE_LINE)))
@@ -355,7 +355,7 @@ class LevelEditor():
 
                         
     def save(self):
-        success = self.level.save('temp_name')
+        success = self.level.save('level_custom')
         print(f'save : {success}')
         self.next_loop = self.basic_loop
 

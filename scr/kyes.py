@@ -44,7 +44,7 @@ class GameControls(Controls):
         level = env['level']
         if not level.is_ball_moving() and MOUSEBUTTONDOWN_PRESSED:
             ball = level.ball
-            ball.speed = ball.shape.pos - mouse_position()
+            ball.speed = ball.position - mouse_position()
             ball.speed = 200*np.min([time.time() - MOUSEBUTTONDOWN_TIME, 2])* ball.speed /np.linalg.norm(ball.speed)
             MOUSEBUTTONDOWN_PRESSED = False
             level.played += 1

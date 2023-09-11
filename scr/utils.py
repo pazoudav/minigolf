@@ -46,12 +46,15 @@ TEXTURE_BALL = 'ball.png'
 TEXTURE_POLYGON = 'polygon.png'
 TEXTURE_BACK = 'back.png'
 TEXTURE_STAR = 'gold_star2.png'
+TEXTURE_SAD_STAR = 'grey_star.png'
 TEXTURE_LEVEL_EDITOR = 'level_editor.jpg'
 TEXTURE_CHOOSE_LEVEL = 'choose_level.jpg'
 TEXTURE_LEVEL_1 = 'level_01.jpg'
 TEXTURE_LEVEL_2 = 'level_02.jpg'
 TEXTURE_LEVEL_3 = 'level_03.jpg'
 TEXTURE_LEVEL_4 = 'level_04.jpg'
+TEXTURE_LEVEL_CUSTOM = 'custom_level.jpg'
+TEXTURE_REDO = 'redo.png'
 
 COLOR_BARRIER = [0.3, 0.2, 0.1]
 COLOR_1 = (0.3, 0.8, 0.1)
@@ -65,7 +68,7 @@ H = 9
 SIZE = 100
 SIZE_BALL = 20
 SIZE_HOLE = 30
-SIZE_STAR = 30
+SIZE_STAR = 20
 SIZE_BUTTON = 50
 SIZE_MENU_BUTTON = 150
 

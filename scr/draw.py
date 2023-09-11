@@ -5,6 +5,9 @@ from material import *
 from shape import *
 from utils import *
 
+
+    
+
 def draw_level(level):
     # glClear(GL_COLOR_BUFFER_BIT) 
     for body in level.background:
@@ -117,8 +120,8 @@ def draw_ball(ball):
         
     # glBegin(GL_LINES)
     # glColor3f(0.8, 0.1, 0.8)
-    # glVertex2f(*ball.shape.pos)
-    # glVertex2f(*(ball.shape.pos + ball.speed))
+    # glVertex2f(*ball.position)
+    # glVertex2f(*(ball.position + ball.speed))
     # glEnd()
     
 def draw_quad(quad):

@@ -48,6 +48,7 @@ def reset_camera():
 def mouse_position():
     return np.array([pg.mouse.get_pos()[0]*FACTOR_SCALE + OFFSET_HORIZONTAL, (HEIGHT-pg.mouse.get_pos()[1])*FACTOR_SCALE + OFFSET_VERTICAL])
 
+
 def init_game():
     pg.display.init()
     pg.display.set_mode((WIDTH, HEIGHT), DOUBLEBUF|OPENGL)
@@ -104,13 +105,23 @@ def set_game_loop(env):
         update(level, clock)
         set_mode()
         draw_level(level)
-        draw_aim_bar(level.ball.shape.pos, mouse_position())
+        if not level.is_ball_moving():
+            draw_aim_bar(level.ball.position, mouse_position())
         if MOUSEBUTTONDOWN_PRESSED:
-            draw_power_bar(MOUSEBUTTONDOWN_TIME, level.ball.shape.pos, mouse_position())
+            draw_power_bar(MOUSEBUTTONDOWN_TIME, level.ball.position, mouse_position())
         if level.is_won():
+            
+            for i in range(1000):
+                d = level.hole.position - level.ball.position
+                d = d/np.linalg.norm(d)
+                n = 100*np.array([-d[1], d[0]])
+                level.ball.speed = n
+                update(level, clock)
+                set_mode()
+                draw_level(level)
+                pg.display.flip()
             play_sound(SOUND_WIN)
-            # level.reset()
-            launch_choose_level_menu(env)
+            launch_end_level_menu(env)
             
     delta = 10
     def key_down_left(env):
@@ -137,7 +148,7 @@ def set_game_loop(env):
         level = env['level']
         if not level.is_ball_moving() and MOUSEBUTTONDOWN_PRESSED:
             ball = level.ball
-            ball.speed = ball.shape.pos - mouse_position()
+            ball.speed = ball.position - mouse_position()
             ball.speed = 200*np.min([time.time() - MOUSEBUTTONDOWN_TIME, 2])* ball.speed /np.linalg.norm(ball.speed)
             MOUSEBUTTONDOWN_PRESSED = False
             level.played += 1
@@ -164,7 +175,36 @@ def set_game_loop(env):
     keys[pg.MOUSEBUTTONDOWN][1] =  mouse_1_down
     
     
+def launch_end_level_menu(env):
+    reset_keys(env)  
+    reset_camera()
+    level = env['level']
+    n_star = level.stars_collected()
+    # print(OFFSET_HORIZONTAL, OFFSET_VERTICAL, FACTOR_SCALE)
+    end_level_menu = Menu()
+    end_level_menu.add_button('star1',   Button([200, 400], SIZE_MENU_BUTTON, SIZE_MENU_BUTTON, nothing, Texture(TEXTURE_STAR if n_star > 0 else TEXTURE_SAD_STAR)))
+    end_level_menu.add_button('star2',   Button([400, 400], SIZE_MENU_BUTTON, SIZE_MENU_BUTTON, nothing, Texture(TEXTURE_STAR if n_star > 1 else TEXTURE_SAD_STAR)))
+    end_level_menu.add_button('star3',   Button([600, 400], SIZE_MENU_BUTTON, SIZE_MENU_BUTTON, nothing, Texture(TEXTURE_STAR if n_star > 2 else TEXTURE_SAD_STAR)))
+    end_level_menu.add_button('redo',    Button([500, 200], SIZE_MENU_BUTTON, SIZE_MENU_BUTTON, launch_game_loop, Texture(TEXTURE_REDO)))
+    end_level_menu.add_button('home',    Button([300, 200], SIZE_MENU_BUTTON, SIZE_MENU_BUTTON, launch_choose_level_menu, Texture(TEXTURE_HOME)))   
+    env['end_level_menu'] = end_level_menu
+    set_end_level_menu(env)
     
+def set_end_level_menu(env):
+    global pre_loop, keys 
+    
+    def pre_loop_(env):
+        # set_mode()
+        draw_menu(env['end_level_menu']) 
+    
+    def mouse_1_down(env):
+        success, result = env['end_level_menu'].click(mouse_position()) 
+        if success:
+            result(env)
+     
+    pre_loop = pre_loop_
+    keys[pg.KEYDOWN][K_ESCAPE] = launch_choose_level_menu
+    keys[pg.MOUSEBUTTONDOWN][1] =  mouse_1_down
 
 def launch_start_menu(env):    
     reset_keys(env) 
@@ -196,12 +236,13 @@ def set_start_menu(env):
 def launch_choose_level_menu(env):
     reset_keys(env)  
     reset_camera()
-    print(OFFSET_HORIZONTAL, OFFSET_VERTICAL, FACTOR_SCALE)
+    # print(OFFSET_HORIZONTAL, OFFSET_VERTICAL, FACTOR_SCALE)
     choose_level_menu = Menu()
-    choose_level_menu.add_button('level1',   Button([300, 400], SIZE_MENU_BUTTON, SIZE_MENU_BUTTON, 'balls', Texture(TEXTURE_LEVEL_1)))
-    choose_level_menu.add_button('level2',   Button([500, 400], SIZE_MENU_BUTTON, SIZE_MENU_BUTTON, 'config2', Texture(TEXTURE_LEVEL_2)))
-    choose_level_menu.add_button('level3',   Button([300, 200], SIZE_MENU_BUTTON, SIZE_MENU_BUTTON, 'config3', Texture(TEXTURE_LEVEL_3)))
-    choose_level_menu.add_button('level4',   Button([500, 200], SIZE_MENU_BUTTON, SIZE_MENU_BUTTON, 'temp_name', Texture(TEXTURE_LEVEL_4)))
+    choose_level_menu.add_button('level1',   Button([300, 500], SIZE_MENU_BUTTON, SIZE_MENU_BUTTON, 'level_2', Texture(TEXTURE_LEVEL_1)))
+    choose_level_menu.add_button('level2',   Button([500, 500], SIZE_MENU_BUTTON, SIZE_MENU_BUTTON, 'level_3', Texture(TEXTURE_LEVEL_2)))
+    choose_level_menu.add_button('level3',   Button([300, 300], SIZE_MENU_BUTTON, SIZE_MENU_BUTTON, 'level_4', Texture(TEXTURE_LEVEL_3)))
+    choose_level_menu.add_button('level4',   Button([500, 300], SIZE_MENU_BUTTON, SIZE_MENU_BUTTON, 'level_1', Texture(TEXTURE_LEVEL_4)))
+    choose_level_menu.add_button('custom_level',   Button([400, 100], SIZE_MENU_BUTTON, SIZE_MENU_BUTTON, 'level_custom', Texture(TEXTURE_LEVEL_CUSTOM)))   
     env['choose_level_menu'] = choose_level_menu
     set_choose_level_menu(env)
     
@@ -222,6 +263,7 @@ def set_choose_level_menu(env):
     keys[pg.KEYDOWN][K_ESCAPE] = set_start_menu
     keys[pg.MOUSEBUTTONDOWN][1] =  mouse_1_down
     
+       
                       
 def launch_level_editor(env):
     reset_camera()
@@ -229,6 +271,8 @@ def launch_level_editor(env):
     editor.run()
     reset_camera()
     launch_start_menu(env)
+          
+          
                       
 if __name__ == '__main__':
     env = {}
