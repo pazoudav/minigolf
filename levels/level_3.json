@@ -1,0 +1,54 @@
+{
+    "size": [
+        800,
+        600
+    ],
+    "ball": {
+        "position": [
+            74.0,
+            300.0
+        ]
+    },
+    "hole": {
+        "position": [
+            715.0,
+            301.0
+        ]
+    },
+    "barrier": [
+        [
+            790.0,
+            400.0
+        ],
+        [
+            10.0,
+            400.0
+        ],
+        [
+            10.0,
+            200.0
+        ],
+        [
+            790.0,
+            200.0
+        ]
+    ],
+    "statics": [],
+    "kinetics": [
+        {"type": "Quad",
+        "position": [200, 450],
+        "parameters": [10, 100],
+        "program": "lambda t :  [0, -50, 0] if ((t // 2) % 2 == 0) else [0, 50, 0]"} ,
+
+        {"type": "Quad",
+        "position": [400, 250],
+        "parameters": [10, 100],
+        "program": "lambda t :  [0, -50, 0] if ((t // 2) % 2 == 0) else [0, 50, 0]"},
+
+        {"type": "Quad",
+        "position": [600, 450],
+        "parameters": [10, 100],
+        "program": "lambda t :  [0, -50, 0] if ((t // 2) % 2 == 0) else [0, 50, 0]"} 
+    ],
+    "stars": [[200, 220], [400, 380], [600, 220]]
+}
