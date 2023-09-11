@@ -6,10 +6,9 @@ from random import *
 import numpy as np
 from shape import *
 from bodies import *
-import time
-from draw import draw_level, draw_body, draw_menu
-from utils import *
-from level import *
+from draw import draw_level, draw_body, draw_menu, set_mode
+import utils as ut
+from level import Level
 from button import *
 from menu import *
 
@@ -21,48 +20,44 @@ KINETIC = 1
 DELTA = 10
 SCALE_DELTA = 0.9
 
-def mouse_position():
-    return np.array([pg.mouse.get_pos()[0]*FACTOR_SCALE + OFFSET_HORIZONTAL, (HEIGHT-pg.mouse.get_pos()[1])*FACTOR_SCALE + OFFSET_VERTICAL])
-
 def move(event):
-    global OFFSET_HORIZONTAL, OFFSET_VERTICAL, FACTOR_SCALE
     if event.key == K_DOWN:
-        OFFSET_VERTICAL -= DELTA
+        ut.OFFSET_VERTICAL -= DELTA
     elif event.key == K_UP:
-        OFFSET_VERTICAL += DELTA
+        ut.OFFSET_VERTICAL += DELTA
     elif event.key == K_LEFT:
-        OFFSET_HORIZONTAL -= DELTA
+        ut.OFFSET_HORIZONTAL -= DELTA
     elif event.key == K_RIGHT:
-        OFFSET_HORIZONTAL += DELTA
+        ut.OFFSET_HORIZONTAL += DELTA
     elif event.key == 61: #plus
-        FACTOR_SCALE *= SCALE_DELTA
+        ut.FACTOR_SCALE *= SCALE_DELTA
     elif event.key == 45: # minus
-        FACTOR_SCALE /= SCALE_DELTA
+        ut.FACTOR_SCALE /= SCALE_DELTA
 
 class LevelEditor():
     def __init__(self):
         self.level = Level('')
-        self.level.size = np.array([WIDTH,HEIGHT])
+        self.level.size = np.array([ut.WIDTH,ut.HEIGHT])
         self.level.add_background()
         self.main_menu = Menu()
         # self.main_buttons = BodyCollection()
-        self.main_menu.add_button('golfball',   Button([OFFSET_BUTTON,540], SIZE_BUTTON, SIZE_BUTTON, self.add_ball, Texture(TEXTURE_GOLFBALL)))
-        self.main_menu.add_button('hole',       Button([OFFSET_BUTTON,480], SIZE_BUTTON, SIZE_BUTTON, self.add_hole, Texture(TEXTURE_HOLE)))
-        self.main_menu.add_button('barrier',    Button([OFFSET_BUTTON,420], SIZE_BUTTON, SIZE_BUTTON, self.add_barrier_launcher, Texture(TEXTURE_BARRIER)))
-        self.main_menu.add_button('static',     Button([OFFSET_BUTTON,360], SIZE_BUTTON, SIZE_BUTTON, self.add_static_launcher, Texture(TEXTURE_STATIC))) 
-        self.main_menu.add_button('star',       Button([OFFSET_BUTTON,300], SIZE_BUTTON, SIZE_BUTTON, self.add_star, Texture(TEXTURE_STAR))) # star
-        self.main_menu.add_button('save',       Button([OFFSET_BUTTON,240], SIZE_BUTTON, SIZE_BUTTON, self.save, Texture(TEXTURE_SAVE))) 
-        # self.main_menu.add_button('delete',     Button([OFFSET_BUTTON,180], SIZE_BUTTON, SIZE_BUTTON, self.basic_loop, Texture(TEXTURE_TRASHCAN))) # delete
-        self.main_menu.add_button('home',       Button([OFFSET_BUTTON,180], SIZE_BUTTON, SIZE_BUTTON, None, Texture(TEXTURE_HOME))) # back to menu
+        self.main_menu.add_button('golfball',   Button([ut.OFFSET_BUTTON,540], ut.SIZE_BUTTON, ut.SIZE_BUTTON, self.add_ball, Texture(ut.TEXTURE_GOLFBALL)))
+        self.main_menu.add_button('hole',       Button([ut.OFFSET_BUTTON,480], ut.SIZE_BUTTON, ut.SIZE_BUTTON, self.add_hole, Texture(ut.TEXTURE_HOLE)))
+        self.main_menu.add_button('barrier',    Button([ut.OFFSET_BUTTON,420], ut.SIZE_BUTTON, ut.SIZE_BUTTON, self.add_barrier_launcher, Texture(ut.TEXTURE_BARRIER)))
+        self.main_menu.add_button('static',     Button([ut.OFFSET_BUTTON,360], ut.SIZE_BUTTON, ut.SIZE_BUTTON, self.add_static_launcher, Texture(ut.TEXTURE_STATIC))) 
+        self.main_menu.add_button('star',       Button([ut.OFFSET_BUTTON,300], ut.SIZE_BUTTON, ut.SIZE_BUTTON, self.add_star, Texture(ut.TEXTURE_STAR))) # star
+        self.main_menu.add_button('save',       Button([ut.OFFSET_BUTTON,240], ut.SIZE_BUTTON, ut.SIZE_BUTTON, self.save, Texture(ut.TEXTURE_SAVE))) 
+        # self.main_menu.add_button('delete',     Button([ut.OFFSET_BUTTON,180], ut.SIZE_BUTTON, ut.SIZE_BUTTON, self.basic_loop, Texture(ut.TEXTURE_TRASHCAN))) # delete
+        self.main_menu.add_button('home',       Button([ut.OFFSET_BUTTON,180], ut.SIZE_BUTTON, ut.SIZE_BUTTON, None, Texture(ut.TEXTURE_HOME))) # back to menu
         
         self.shape_menu = Menu()
-        self.shape_menu.add_button('line',      Button([OFFSET_BUTTON,570], SIZE_BUTTON, SIZE_BUTTON, self.add_Line, Texture(TEXTURE_LINE)))
-        self.shape_menu.add_button('triangle',  Button([OFFSET_BUTTON,510], SIZE_BUTTON, SIZE_BUTTON, self.add_Triangle, Texture(TEXTURE_TRIANGLE)))
-        self.shape_menu.add_button('quad',      Button([OFFSET_BUTTON,450], SIZE_BUTTON, SIZE_BUTTON, self.add_Quad, Texture(TEXTURE_QUAD)))
-        self.shape_menu.add_button('ball',      Button([OFFSET_BUTTON,390], SIZE_BUTTON, SIZE_BUTTON, self.add_Ball, Texture(TEXTURE_BALL)))
-        self.shape_menu.add_button('polygon',   Button([OFFSET_BUTTON,330], SIZE_BUTTON, SIZE_BUTTON, self.add_Polygon, Texture(TEXTURE_POLYGON)))
-        self.shape_menu.add_button('back',      Button([OFFSET_BUTTON,270], SIZE_BUTTON, SIZE_BUTTON, self.select_shape, Texture(TEXTURE_BACK)))
-        self.shape_menu.add_button('style',     Switch([OFFSET_BUTTON,210], SIZE_BUTTON, SIZE_BUTTON, Texture(TEXTURE_HOME), Texture(TEXTURE_GOLFBALL)))
+        self.shape_menu.add_button('line',      Button([ut.OFFSET_BUTTON,570], ut.SIZE_BUTTON, ut.SIZE_BUTTON, self.add_Line, Texture(ut.TEXTURE_LINE)))
+        self.shape_menu.add_button('triangle',  Button([ut.OFFSET_BUTTON,510], ut.SIZE_BUTTON, ut.SIZE_BUTTON, self.add_Triangle, Texture(ut.TEXTURE_TRIANGLE)))
+        self.shape_menu.add_button('quad',      Button([ut.OFFSET_BUTTON,450], ut.SIZE_BUTTON, ut.SIZE_BUTTON, self.add_Quad, Texture(ut.TEXTURE_QUAD)))
+        self.shape_menu.add_button('ball',      Button([ut.OFFSET_BUTTON,390], ut.SIZE_BUTTON, ut.SIZE_BUTTON, self.add_Ball, Texture(ut.TEXTURE_BALL)))
+        self.shape_menu.add_button('polygon',   Button([ut.OFFSET_BUTTON,330], ut.SIZE_BUTTON, ut.SIZE_BUTTON, self.add_Polygon, Texture(ut.TEXTURE_POLYGON)))
+        self.shape_menu.add_button('back',      Button([ut.OFFSET_BUTTON,270], ut.SIZE_BUTTON, ut.SIZE_BUTTON, self.select_shape, Texture(ut.TEXTURE_BACK)))
+        self.shape_menu.add_button('style',     Switch([ut.OFFSET_BUTTON,210], ut.SIZE_BUTTON, ut.SIZE_BUTTON, Texture(ut.TEXTURE_HOME), Texture(ut.TEXTURE_GOLFBALL)))
         self.shape_menu.deactivate_button('style')
         
         self.memory = EMPTY_MEMORY
@@ -91,7 +86,7 @@ class LevelEditor():
                     move(event)
             elif event.type == pg.MOUSEBUTTONDOWN:
                 if event.button == 1 :
-                    success, result = self.main_menu.click(mouse_position())    
+                    success, result = self.main_menu.click(ut.mouse_position())    
                     if success:
                         self.next_loop = result                       
         draw_menu(self.main_menu)
@@ -110,9 +105,9 @@ class LevelEditor():
                     move(event)
             elif event.type == pg.MOUSEBUTTONDOWN:
                 if event.button == 1 :
-                    self.level.add_ball(mouse_position())
+                    self.level.add_ball(ut.mouse_position())
                     self.next_loop = self.basic_loop
-        draw_body(BasicBody(Point(mouse_position()), OutlineColor([(0.1, 0.9, 0.2)], width=SIZE_BALL*2)))
+        draw_body(BasicBody(Point(ut.mouse_position()), OutlineColor([(0.1, 0.9, 0.2)], width=ut.SIZE_BALL*2)))
 
 
     def add_hole(self):
@@ -128,9 +123,9 @@ class LevelEditor():
                     move(event)
             elif event.type == pg.MOUSEBUTTONDOWN:
                 if event.button == 1 :
-                    self.level.add_hole(mouse_position())
+                    self.level.add_hole(ut.mouse_position())
                     self.next_loop = self.basic_loop
-        draw_body(BasicBody(Point(mouse_position()), OutlineColor([(0.1, 0.3, 0.2)], width=SIZE_HOLE*2)))
+        draw_body(BasicBody(Point(ut.mouse_position()), OutlineColor([(0.1, 0.3, 0.2)], width=ut.SIZE_HOLE*2)))
 
 
     def add_barrier_launcher(self):
@@ -140,7 +135,7 @@ class LevelEditor():
     def add_barrier(self):
         self.next_loop = self.add_barrier
         res = 20
-        mouse_pos = mouse_position()//res * res + res/2
+        mouse_pos = ut.mouse_position()//res * res + res/2
         draw_body(BasicBody(Point(mouse_pos), OutlineColor([(0.2, 0.3, 1)], width=10)))
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -163,7 +158,7 @@ class LevelEditor():
         
         if len(self.memory) > 0:
             self.memory.append(mouse_pos)
-            draw_body(StaticBody(Polygon([0,0], self.memory), OutlineColor([COLOR_BARRIER])))
+            draw_body(StaticBody(Polygon([0,0], self.memory), OutlineColor([ut.COLOR_BARRIER])))
             self.memory.pop()
        
     def add_star(self):
@@ -179,9 +174,9 @@ class LevelEditor():
                     move(event)
             elif event.type == pg.MOUSEBUTTONDOWN:
                 if event.button == 1 :
-                    self.level.add_star(mouse_position())
+                    self.level.add_star(ut.mouse_position())
                     self.next_loop = self.basic_loop
-        draw_body(BasicBody(Point(mouse_position()), OutlineColor([(0.5, 0.5, 0.1)], width=SIZE_STAR*2)))
+        draw_body(BasicBody(Point(ut.mouse_position()), OutlineColor([(0.5, 0.5, 0.1)], width=ut.SIZE_STAR*2)))
                               
                         
     def add_static_launcher(self):
@@ -190,7 +185,7 @@ class LevelEditor():
         self.next_loop = self.select_shape
         
     def add_static(self, shape):
-        self.level.add_static_body(StaticBody(shape, Texture(TEXTURE_STATIC_BODY)))
+        self.level.add_static_body(StaticBody(shape, Texture(ut.TEXTURE_STATIC_BODY)))
         
     def add_kinetic(self, shape):
         ...
@@ -208,7 +203,7 @@ class LevelEditor():
                     move(event)
             elif event.type == pg.MOUSEBUTTONDOWN:
                 if event.button == 1 :
-                    success, result = self.shape_menu.click(mouse_position()) 
+                    success, result = self.shape_menu.click(ut.mouse_position()) 
                     if success:
                         self.memory = []
                         self.next_loop = result  
@@ -229,16 +224,16 @@ class LevelEditor():
             elif event.type == pg.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if self.memory == EMPTY_MEMORY:
-                        self.memory = mouse_position()
+                        self.memory = ut.mouse_position()
                     else:
-                        shape = Line(self.memory, mouse_position())
+                        shape = Line(self.memory, ut.mouse_position())
                         if self.new_body_type == STATIC:
                             self.add_static(shape)
                         else:
                             self.add_kinetic(shape)
                         self.next_loop = self.basic_loop
         if len(self.memory) > 0 :             
-            draw_body(StaticBody(Line(self.memory, mouse_position()), OutlineColor([COLOR_BARRIER])))
+            draw_body(StaticBody(Line(self.memory, ut.mouse_position()), OutlineColor([ut.COLOR_BARRIER])))
 
     
     def add_Triangle(self):
@@ -255,11 +250,11 @@ class LevelEditor():
             elif event.type == pg.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if len(self.memory) == 0:
-                        self.memory = [mouse_position()]
+                        self.memory = [ut.mouse_position()]
                     elif len(self.memory) == 1:
-                        self.memory.append(mouse_position())
+                        self.memory.append(ut.mouse_position())
                     elif len(self.memory) == 2:
-                        shape = Triangle(mouse_position(), self.memory)
+                        shape = Triangle(ut.mouse_position(), self.memory)
                         if self.new_body_type == STATIC:
                             self.add_static(shape)
                         else:
@@ -267,9 +262,9 @@ class LevelEditor():
                         self.next_loop = self.basic_loop
                         
         if len(self.memory) == 1:
-            draw_body(StaticBody(Line(self.memory[0], mouse_position()), OutlineColor([COLOR_BARRIER])))
+            draw_body(StaticBody(Line(self.memory[0], ut.mouse_position()), OutlineColor([ut.COLOR_BARRIER])))
         elif len(self.memory) == 2:
-            draw_body(StaticBody(Triangle(mouse_position(), self.memory), OutlineColor([COLOR_BARRIER])))
+            draw_body(StaticBody(Triangle(ut.mouse_position(), self.memory), OutlineColor([ut.COLOR_BARRIER])))
     
     
     def add_Quad(self):
@@ -286,9 +281,9 @@ class LevelEditor():
             elif event.type == pg.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if len(self.memory) == 0:
-                        self.memory = mouse_position()
+                        self.memory = ut.mouse_position()
                     else:
-                        shape = Quad(self.memory, np.abs(mouse_position() - self.memory)*2)
+                        shape = Quad(self.memory, np.abs(ut.mouse_position() - self.memory)*2)
                         if self.new_body_type == STATIC:
                             self.add_static(shape)
                         else:
@@ -296,7 +291,7 @@ class LevelEditor():
                         self.next_loop = self.basic_loop
                         
         if len(self.memory) > 0:
-            draw_body(StaticBody(Quad(self.memory, np.abs(mouse_position() - self.memory)*2), Texture(TEXTURE_STATIC_BODY))) 
+            draw_body(StaticBody(Quad(self.memory, np.abs(ut.mouse_position() - self.memory)*2), Texture(ut.TEXTURE_STATIC_BODY))) 
 
     
     def add_Ball(self):
@@ -313,9 +308,9 @@ class LevelEditor():
             elif event.type == pg.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if len(self.memory) == 0:
-                        self.memory = mouse_position()
+                        self.memory = ut.mouse_position()
                     else:
-                        shape = Ball(self.memory, [np.linalg.norm(mouse_position() - self.memory), 32])
+                        shape = Ball(self.memory, [np.linalg.norm(ut.mouse_position() - self.memory), 32])
                         if self.new_body_type == STATIC:
                             self.add_static(shape)
                         else:
@@ -323,7 +318,7 @@ class LevelEditor():
                         self.next_loop = self.basic_loop
                         
         if len(self.memory) > 0:
-            draw_body(StaticBody(Ball(self.memory, [np.linalg.norm(mouse_position() - self.memory), 32]), Texture(TEXTURE_STATIC_BODY))) 
+            draw_body(StaticBody(Ball(self.memory, [np.linalg.norm(ut.mouse_position() - self.memory), 32]), Texture(ut.TEXTURE_STATIC_BODY))) 
 
     
     def add_Polygon(self):
@@ -346,11 +341,11 @@ class LevelEditor():
                     move(event)
             elif event.type == pg.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    self.memory.append(mouse_position())
+                    self.memory.append(ut.mouse_position())
                         
         if len(self.memory) > 0:
-            self.memory.append(mouse_position())
-            draw_body(StaticBody(Polygon([0,0], self.memory), OutlineColor([COLOR_BARRIER])))
+            self.memory.append(ut.mouse_position())
+            draw_body(StaticBody(Polygon([0,0], self.memory), OutlineColor([ut.COLOR_BARRIER])))
             self.memory.pop()
 
                         
@@ -360,33 +355,33 @@ class LevelEditor():
         self.next_loop = self.basic_loop
 
 
-def init_game():
-    pg.display.init()
-    pg.display.set_mode((WIDTH, HEIGHT), DOUBLEBUF|OPENGL)
-    glClearColor(0.3, 0.5, 0.2, 1.0)
-    glLineWidth(LINE_WIDTH)
-    glPointSize(4)
-    play_sound(SOUND_BACKGROUND)
-    glEnable(GL_BLEND)
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+# def init_game():
+#     pg.display.init()
+#     pg.display.set_mode((ut.WIDTH, ut.HEIGHT), DOUBLEBUF|OPENGL)
+#     glClearColor(0.3, 0.5, 0.2, 1.0)
+#     glLineWidth(LINE_WIDTH)
+#     glPointSize(4)
+#     play_sound(SOUND_BACKGROUND)
+#     glEnable(GL_BLEND)
+#     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
 
-def set_mode():
-    glMatrixMode(GL_PROJECTION)
-    glLoadIdentity()
-    glMatrixMode(GL_MODELVIEW)
-    glLoadIdentity()
+# def set_mode():
+#     glMatrixMode(GL_PROJECTION)
+#     glLoadIdentity()
+#     glMatrixMode(GL_MODELVIEW)
+#     glLoadIdentity()
     
-    gluOrtho2D(FACTOR_SCALE*OFFSET_HORIZONTAL, 
-               FACTOR_SCALE*(WIDTH+OFFSET_HORIZONTAL), 
-               FACTOR_SCALE*OFFSET_VERTICAL, 
-               FACTOR_SCALE*(HEIGHT+ OFFSET_VERTICAL))
-    glViewport(0, 0, WIDTH, HEIGHT)
+#     gluOrtho2D(ut.FACTOR_SCALE*ut.OFFSET_HORIZONTAL, 
+#                ut.FACTOR_SCALE*(ut.WIDTH+ut.OFFSET_HORIZONTAL), 
+#                ut.FACTOR_SCALE*ut.OFFSET_VERTICAL, 
+#                ut.FACTOR_SCALE*(ut.HEIGHT+ ut.OFFSET_VERTICAL))
+#     glViewport(0, 0, ut.WIDTH, ut.HEIGHT)
     
-    glClear(GL_COLOR_BUFFER_BIT)
+#     glClear(GL_COLOR_BUFFER_BIT)
                         
 
-if __name__ == "__main__":
-    init_game()
-    editor = LevelEditor()
-    editor.run()
+# if __name__ == "__main__":
+#     init_game()
+#     editor = LevelEditor()
+#     editor.run()

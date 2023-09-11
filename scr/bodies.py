@@ -2,7 +2,7 @@ import numpy as np
 from shape import *
 from math import pi
 from material import *
-from utils import *
+import utils as ut
 
 GHOST = 0
 SOLID = 1
@@ -107,19 +107,19 @@ class DynamicBody(BasicBody):
 
 class Hole(StaticBody):
     def __init__(self, position):
-        super(Hole, self).__init__(Ball(position, [SIZE_HOLE, RESOLUTION_HOLE]), Texture(TEXTURE_HOLE)) # SolidColor([COLOR_HOLE_IN, COLOR_HOLE_OUT]))
+        super(Hole, self).__init__(Ball(position, [ut.SIZE_HOLE, ut.RESOLUTION_HOLE]), Texture(ut.TEXTURE_HOLE)) # SolidColor([COLOR_HOLE_IN, COLOR_HOLE_OUT]))
         self.collision = GHOST
 
 
 class Golfball(DynamicBody):
     def __init__(self, position):
-        super(Golfball, self).__init__(Ball(position, [SIZE_BALL, RESOLUTION_BALL]), Texture(TEXTURE_GOLFBALL))
-        self.friction = FRICTION_GOLF
+        super(Golfball, self).__init__(Ball(position, [ut.SIZE_BALL, ut.RESOLUTION_BALL]), Texture(ut.TEXTURE_GOLFBALL))
+        self.friction = ut.FRICTION_GOLF
         
         
 class Star(StaticBody):
     def __init__(self, position):
-        super(Star, self).__init__(Ball(position, [SIZE_STAR, RESOLUTION_STAR]), Texture(TEXTURE_STAR))
+        super(Star, self).__init__(Ball(position, [ut.SIZE_STAR, ut.RESOLUTION_STAR]), Texture(ut.TEXTURE_STAR))
         self.collision = GHOST
         self.collected = False
         

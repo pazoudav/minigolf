@@ -53,7 +53,6 @@ class Texture(Solid):
         self.load(filename)
         self.scale = scale
         self.offset = offset
-        # self.map(np.array(texture_points), scale, offset)
     
     def map(self, points):
         p = np.array(deepcopy(points))
@@ -74,24 +73,14 @@ class Texture(Solid):
         im = im.rotate(180)
         im = ImageOps.mirror(im)
         data = np.asarray(im, dtype=np.uint8)
-        # data = data*[1,1,1,0.5]
-        # print(data)
-        # print(data)
         self.texture = glGenTextures(1)
         glBindTexture(GL_TEXTURE_2D, self.texture)
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
-        # glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
-        # glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
         glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE)
-        # glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL) 
-        # if len(data[0][0]) == 3:
-        #     t = GL_RGB
-        # elif len(data[0][0]) == 4:
-        #     t = GL_RGBA
         t = GL_RGBA
         glTexImage2D(GL_TEXTURE_2D, 0, t, im.width, im.height, 0, t, GL_UNSIGNED_BYTE, data)
         im.close()

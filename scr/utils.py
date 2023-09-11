@@ -14,6 +14,20 @@ SOUND_BACKGROUND.set_volume(0.4)
 SOUND_STRECH = pg.mixer.Sound(SOUND_DIR + 'strech.wav')
 SOUND_STRECH.set_volume(0.4)
 
+
+clock = pg.time.Clock()
+
+def reset_camera():
+    OFFSET_HORIZONTAL = 0
+    OFFSET_VERTICAL = 0
+    FACTOR_SCALE = 1
+    
+
+
+def mouse_position():
+    return np.array([pg.mouse.get_pos()[0]* FACTOR_SCALE + OFFSET_HORIZONTAL, (HEIGHT-pg.mouse.get_pos()[1])* FACTOR_SCALE + OFFSET_VERTICAL])
+
+
 def play_sound(sound):
     sound.play()
     

@@ -1,13 +1,25 @@
 from OpenGL.GL import *
+from OpenGL.GLU import *
 from PIL import Image
 import numpy as np
 from material import *
 from shape import *
-from utils import *
+import utils as ut
+from copy import deepcopy
 
 
-    
-
+def set_mode():
+    glMatrixMode(GL_PROJECTION)
+    glLoadIdentity()
+    glMatrixMode(GL_MODELVIEW)
+    glLoadIdentity()  
+    gluOrtho2D( ut.FACTOR_SCALE*ut.OFFSET_HORIZONTAL, 
+                ut.FACTOR_SCALE*(ut.WIDTH+ut.OFFSET_HORIZONTAL), 
+                ut.FACTOR_SCALE*ut.OFFSET_VERTICAL, 
+                ut.FACTOR_SCALE*(ut.HEIGHT+ ut.OFFSET_VERTICAL))
+    glViewport(0, 0, ut.WIDTH, ut.HEIGHT)
+    glClear(GL_COLOR_BUFFER_BIT)
+        
 def draw_level(level):
     # glClear(GL_COLOR_BUFFER_BIT) 
     for body in level.background:
@@ -27,10 +39,13 @@ def draw_level(level):
         
 def draw_menu(menu):
     for button in menu.buttons.values():
+        # old_points = deepcopy(button.shape.points)
+        # button.shape.points = np.array(button.shape.points)*ut.FACTOR_SCALE - [ut.OFFSET_HORIZONTAL, ut.OFFSET_VERTICAL]
         draw_body(button)
+        # button.shape.points = old_points
     
 def draw_power_bar(time_, ball_position, mouse_pos):
-    t = np.min([2,time.time() - time_])/2
+    t = np.min([2,ut.time.time() - time_])/2
     diff = ball_position - mouse_pos
     diff /= np.linalg.norm(diff)
     glLineWidth(2)
@@ -40,7 +55,7 @@ def draw_power_bar(time_, ball_position, mouse_pos):
     glColor3f(1.0, (1-t)*1, (1-t)*1)
     glVertex2f(*(ball_position + (50*(1.5*t+1))*diff))
     glEnd()
-    glLineWidth(LINE_WIDTH)
+    glLineWidth(ut.LINE_WIDTH)
     
 def draw_aim_bar(ball_position, mouse_pos): 
     diff = ball_position - mouse_pos
@@ -52,7 +67,7 @@ def draw_aim_bar(ball_position, mouse_pos):
     glColor3f(1,1,1)
     glVertex2f(*(ball_position + (50*(2.5))*diff))
     glEnd()
-    glLineWidth(LINE_WIDTH)
+    glLineWidth(ut.LINE_WIDTH)
 
 def draw_body(body):
     if not body.visible:
@@ -87,7 +102,7 @@ def draw_outside(body):
         glColor3f(*body.material[0])
         glVertex2f(*points[0])
         glEnd()
-        glPointSize(POINT_SIZE)
+        glPointSize(ut.POINT_SIZE)
     else:
         glLineWidth(body.material.width)
         glBegin(GL_LINE_LOOP)
@@ -95,7 +110,7 @@ def draw_outside(body):
             glColor3f(*body.material[i])
             glVertex2f(*points[i])
         glEnd()  
-        glLineWidth(LINE_WIDTH)  
+        glLineWidth(ut.LINE_WIDTH)  
 
 
 def draw_full_shape_helper(material):
